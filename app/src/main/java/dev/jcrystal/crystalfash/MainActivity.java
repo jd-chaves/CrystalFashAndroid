@@ -47,6 +47,6 @@ public class MainActivity extends AppCompatActivity implements OnErrorListener, 
 
     @Override
     public void onSuccess() {
-        Toast.makeText(this, "Operacion exitosa", Toast.LENGTH_SHORT);
+        Toast.makeText(this, "Message send to server", Toast.LENGTH_LONG).show();
     }
 }

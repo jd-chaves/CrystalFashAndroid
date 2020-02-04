@@ -37,7 +37,7 @@ public class ContactFragment extends Fragment{
             public void onClick(View view) {
 
                 ManagerContact.contact(activity, editName.getText().toString(), editEmail.getText().toString(), editMessage.getText().toString(), (OnVoidSuccessListener) activity, (OnErrorListener) activity);
-                Toast.makeText(getContext(), "Message send to server", Toast.LENGTH_LONG).show();
+
             }
         });
         return root;

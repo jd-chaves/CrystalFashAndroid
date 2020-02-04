@@ -60,9 +60,10 @@ public class HomeFragment extends Fragment implements On1SuccessListener {
 
     @Override
     public void onSuccess(Object o) {
-
+        if(o == null)
+            return;
         ArrayList temp = (ArrayList) o;
-        if(temp.size()==0)
+        if( temp.size()==0)
             return;
         if(temp.get(0) instanceof ProductNormal){
         ProductNormal temp1;
