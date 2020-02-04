@@ -20,8 +20,13 @@ import java.text.NumberFormat;
 
 import dev.jcrystal.crystalfash.R;
 import dev.jcrystal.crystalfash.models.Product;
+import jcrystal.mobile.entities.ProductNormal;
+import jcrystal.mobile.net.controllers.ManagerProduct;
+import jcrystal.mobile.net.utils.On1SuccessListener;
+import jcrystal.mobile.net.utils.OnErrorListener;
+import jcrystal.mobile.net.utils.RequestError;
 
-public class ProductActivity extends AppCompatActivity {
+public class ProductActivity extends AppCompatActivity implements On1SuccessListener<ProductNormal>, OnErrorListener {
     private TextView txtName,txtDescription,txtCategory, txtPrice, txtOldPrice;
     private ImageView img;
     Button btnAdd2Cart;
@@ -44,18 +49,11 @@ public class ProductActivity extends AppCompatActivity {
         Intent intent = getIntent();
         long idProduct = intent.getExtras().getLong("idProduct");
 
-        //TODO get product details from id
-        product = new Product("Sweater 1", "MEN", "soft sweater", "https://imgur.com/OqgIsqf.jpg", 13, 28);
+        ManagerProduct.getProductById(this, idProduct,  this);
 
         // Setting values
 
-        txtName.setText(product.getName());
-        txtDescription.setText(product.getDescription());
-        txtCategory.setText(product.getCategory());
-        NumberFormat formatter = NumberFormat.getCurrencyInstance();
-        txtPrice.setText(formatter.format(product.getPrice()));
-        txtOldPrice.setText(formatter.format(product.getOldPrice()));
-        Picasso.get().load(product.getImage()).into(img);
+
 
         btnAdd2Cart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,4 +66,20 @@ public class ProductActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onSuccess(ProductNormal productNormal) {
+        product = new Product( productNormal.name(), productNormal.category().getName(), productNormal.description(),productNormal.image(), product.getPrice(), product.getOldPrice());
+        txtName.setText(product.getName());
+        txtDescription.setText(product.getDescription());
+        txtCategory.setText(product.getCategory());
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        txtPrice.setText(formatter.format(product.getPrice()));
+        txtOldPrice.setText(formatter.format(product.getOldPrice()));
+        Picasso.get().load(product.getImage()).into(img);
+    }
+
+    @Override
+    public void onError(RequestError error) {
+        Toast.makeText(this, error.mensaje, Toast.LENGTH_SHORT);
+    }
 }

@@ -1,5 +1,6 @@
 package dev.jcrystal.crystalfash.ui.home;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,19 +16,27 @@ import java.util.List;
 
 import dev.jcrystal.crystalfash.R;
 import dev.jcrystal.crystalfash.models.Product;
+import jcrystal.mobile.entities.ProductNormal;
+import jcrystal.mobile.entities.enums.Categories;
+import jcrystal.mobile.net.controllers.ManagerCart;
+import jcrystal.mobile.net.controllers.ManagerProduct;
+import jcrystal.mobile.net.utils.On1SuccessListener;
+import jcrystal.mobile.net.utils.On2SuccessListener;
+import jcrystal.mobile.net.utils.OnErrorListener;
+import jcrystal.mobile.net.utils.RequestError;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements On1SuccessListener {
 
     private List<Product> lstProducts;
+
+    private List<String> categories;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        //TODO list of products from ws
+
         lstProducts = new ArrayList<>();
-        for(int i=0;i<30;i++){
-            lstProducts.add(new Product("Sweater 1", "MEN", "soft sweater", "https://imgur.com/OqgIsqf.jpg", 13, 28));
-        }
+        ManagerProduct.getProducts( this, this,  (OnErrorListener) this.getActivity());
 
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
@@ -37,12 +46,9 @@ public class HomeFragment extends Fragment {
         myrv.setLayoutManager(new GridLayoutManager(getContext(),2));
         myrv.setAdapter(myAdapter);
 
-        // TODO get list of categories
         List<String> categories = new ArrayList<>();
+        ManagerProduct.getCategories(this,  this, (OnErrorListener) this.getActivity() );
 
-        categories.add("WOMEN");
-        categories.add("MEN");
-        categories.add("KIDS");
 
         RecyclerView rv_category = (RecyclerView) root.findViewById(R.id.recyclerview_category_id);
         CategoryAdapter categoryAdapter = new CategoryAdapter(getContext(),categories);
@@ -51,4 +57,24 @@ public class HomeFragment extends Fragment {
 
         return root;
     }
+
+    @Override
+    public void onSuccess(Object o) {
+
+        ArrayList temp = (ArrayList) o;
+        if(temp.size()==0)
+            return;
+        if(temp.get(0) instanceof ProductNormal){
+        ProductNormal temp1;
+        for(int i=0;i<temp.size();i++){
+            temp1 = (ProductNormal) temp.get(i);
+            lstProducts.add(new Product(temp1.name(), temp1.category().getName(), temp1.description(), temp1.image(), temp1.price(), temp1.oldPrice()));
+        }
+        }
+        else{
+            categories = temp;
+        }
+    }
+
+
 }

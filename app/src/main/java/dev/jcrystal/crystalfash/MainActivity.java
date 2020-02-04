@@ -1,6 +1,7 @@
 package dev.jcrystal.crystalfash;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -10,7 +11,13 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class MainActivity extends AppCompatActivity {
+import jcrystal.mobile.net.controllers.ManagerCart;
+import jcrystal.mobile.net.utils.On1SuccessListener;
+import jcrystal.mobile.net.utils.OnErrorListener;
+import jcrystal.mobile.net.utils.OnVoidSuccessListener;
+import jcrystal.mobile.net.utils.RequestError;
+
+public class MainActivity extends AppCompatActivity implements OnErrorListener, On1SuccessListener, OnVoidSuccessListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +32,21 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+        ManagerCart.createCart(this, this, this);
     }
 
+    @Override
+    public void onSuccess(Object o) {
+        Toast.makeText(this, "Operacion exitosa", Toast.LENGTH_SHORT);
+    }
+
+    @Override
+    public void onError(RequestError error) {
+        Toast.makeText(this, error.mensaje, Toast.LENGTH_SHORT);
+    }
+
+    @Override
+    public void onSuccess() {
+        Toast.makeText(this, "Operacion exitosa", Toast.LENGTH_SHORT);
+    }
 }
