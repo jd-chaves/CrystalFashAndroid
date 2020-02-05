@@ -27,9 +27,13 @@ import jcrystal.mobile.net.utils.RequestError;
 
 public class HomeFragment extends Fragment implements On1SuccessListener {
 
-    private List<Product> lstProducts;
+    private List<Product> lstProducts = new ArrayList<>();
 
-    private List<String> categories;
+    private List<String> categories = new ArrayList<>();
+
+    private CategoryAdapter categoryAdapter;
+
+    private ProductAdapter myAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -42,16 +46,15 @@ public class HomeFragment extends Fragment implements On1SuccessListener {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         RecyclerView myrv = (RecyclerView) root.findViewById(R.id.recyclerview_id);
-        ProductAdapter myAdapter = new ProductAdapter(getContext(),lstProducts);
+        myAdapter = new ProductAdapter(getContext(),lstProducts);
         myrv.setLayoutManager(new GridLayoutManager(getContext(),2));
         myrv.setAdapter(myAdapter);
 
-        List<String> categories = new ArrayList<>();
         ManagerProduct.getCategories(this,  this, (OnErrorListener) this.getActivity() );
 
 
         RecyclerView rv_category = (RecyclerView) root.findViewById(R.id.recyclerview_category_id);
-        CategoryAdapter categoryAdapter = new CategoryAdapter(getContext(),categories);
+        categoryAdapter = new CategoryAdapter(getActivity(),categories, this);
         rv_category.setLayoutManager(new GridLayoutManager(getContext(),3));
         rv_category.setAdapter(categoryAdapter);
 
@@ -71,9 +74,11 @@ public class HomeFragment extends Fragment implements On1SuccessListener {
             temp1 = (ProductNormal) temp.get(i);
             lstProducts.add(new Product(temp1.name(), temp1.category().getName(), temp1.description(), temp1.image(), temp1.price(), temp1.oldPrice()));
         }
+        myAdapter.notifyDataSetChanged();
         }
         else{
             categories = temp;
+            categoryAdapter.notifyDataSetChanged();
         }
     }
 

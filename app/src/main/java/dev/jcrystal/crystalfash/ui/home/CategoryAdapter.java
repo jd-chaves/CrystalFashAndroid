@@ -1,5 +1,6 @@
 package dev.jcrystal.crystalfash.ui.home;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,14 +16,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import dev.jcrystal.crystalfash.R;
+import jcrystal.mobile.entities.ProductNormal;
+import jcrystal.mobile.entities.enums.Categories;
+import jcrystal.mobile.net.controllers.ManagerProduct;
+import jcrystal.mobile.net.utils.On1SuccessListener;
+import jcrystal.mobile.net.utils.OnErrorListener;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyViewHolder> {
     private Context mContext ;
     private List<String> mData ;
+    private HomeFragment homeFragment;
 
-    public CategoryAdapter(Context mContext, List<String> mData) {
+    public CategoryAdapter(Context mContext, List<String> mData, HomeFragment homeFragment) {
         this.mContext = mContext;
         this.mData = mData;
+        this.homeFragment = homeFragment;
     }
     @NonNull
     @Override
@@ -39,7 +47,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO update product list
+                ManagerProduct.filterProductsByCategory((Activity) mContext, Categories.valueOf(mData.get(position)),(On1SuccessListener<List<ProductNormal>>) homeFragment, (OnErrorListener) homeFragment);
                 Toast.makeText(mContext,  holder.txtCategory.getText(), Toast.LENGTH_LONG).show();
             }
         });
